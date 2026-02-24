@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Drawing Tool</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            margin-bottom: 15px;
+        }
+
+        svg {
+            width: 90vw;
+            height: 60vh;
+            border: 2px solid #333;
+            background-color: white;
+        }
+
+        button {
+            padding: 8px 15px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>SVG Drawing Tool</h2>
+
+    <div class="controls">
+        <label>Choose Color:</label>
+        <input type="color" id="colorPicker">
+        <button onclick="undo()">Undo</button>
+    </div>
+
+    <svg id="svgCanvas"></svg>
+
+    <script>
+        const svg = document.getElementById("svgCanvas");
+        const colorPicker = document.getElementById("colorPicker");
+
+        let startX, startY;
+        let currentRect = null;
+        let shapes = [];
+
+        svg.addEventListener("mousedown", function (e) {
+            startX = e.offsetX;
+            startY = e.offsetY;
+
+            currentRect = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "rect"
+            );
+
+            currentRect.setAttribute("x", startX);
+            currentRect.setAttribute("y", startY);
+            currentRect.setAttribute("fill", colorPicker.value);
+
+            svg.appendChild(currentRect);
+            shapes.push(currentRect);
+        });
+
+        svg.addEventListener("mousemove", function (e) {
+            if (!currentRect) return;
+
+            let width = e.offsetX - startX;
+            let height = e.offsetY - startY;
+
+            currentRect.setAttribute("width", Math.abs(width));
+            currentRect.setAttribute("height", Math.abs(height));
+        });
+
+        svg.addEventListener("mouseup", function () {
+            currentRect = null;
+        });
+
+        function undo() {
+            let lastShape = shapes.pop();
+            if (lastShape) {
+                svg.removeChild(lastShape);
+            }
+        }
+    </script>
+
+</body>
+</html>
