@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Character Counter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1771cc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: #d6a9a9;
+            padding: 20px;
+            width: 450px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(229, 214, 214, 0.1);
+        }
+
+        textarea {
+            width: 95%;
+            height: 120px;
+            padding: 10px;
+            font-size: 14px;
+            resize: none;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+
+        .counter {
+            margin-top: 8px;
+            text-align: right;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3>Character Counter</h3>
+    <textarea id="textInput" placeholder="Type your text here..."></textarea>
+    <div class="counter">
+        Characters: <span id="charCount">0</span>
+    </div>
+</div>
+
+<script>
+    const textarea = document.getElementById("textInput");
+    const charCount = document.getElementById("charCount");
+
+    textarea.addEventListener("input", () => {
+        charCount.textContent = textarea.value.length;
+    });
+</script>
+
+</body>
+</html> 
