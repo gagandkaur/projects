@@ -1,20 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Image Gallery</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Assignment 2 - DOM Manipulation</title>
+
+    <!-- ================= INTERNAL CSS ================= -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 30px;
+        }
+
+        h2 {
+            margin-top: 40px;
+        }
+
+        /* ======== TASK 1 - IMAGE GALLERY ======== */
+        .gallery-container {
+            margin-top: 20px;
+        }
+
+        .preview img {
+            width: 500px;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .thumbnails {
+            margin-top: 15px;
+        }
+
+        .thumbnails img {
+            width: 100px;
+            height: 80px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: 3px solid transparent;
+            transition: 0.3s;
+        }
+
+        .thumbnails img:hover {
+            transform: scale(1.1);
+        }
+
+        .thumbnails img.active {
+            border: 3px solid #007bff;
+        }
+
+        /* ======== TASK 2 - DYNAMIC TABLE ======== */
+        input {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 60%;
+            margin: auto;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #ffffff;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #e6f2ff;
+        }
+
+        .delete-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 8px;
+            cursor: pointer;
+        }
+    </style>
 </head>
+
 <body>
+
+    <!-- ================= TASK 1 ================= -->
+    <h2>Task 1: Image Gallery</h2>
 
     <div class="gallery-container">
 
-        <!-- Preview Area -->
         <div class="preview">
-            <img id="previewImage" src="https://picsum.photos/id/1015/600/400" alt="Preview">
+            <img id="previewImage" 
+                 src="https://picsum.photos/id/1015/600/400" 
+                 alt="Preview">
         </div>
 
-        <!-- Thumbnails -->
         <div class="thumbnails">
             <img src="https://picsum.photos/id/1015/600/400" class="thumb active">
             <img src="https://picsum.photos/id/1016/600/400" class="thumb">
@@ -24,6 +114,91 @@
 
     </div>
 
-    <script src="script.js"></script>
+    <!-- ================= TASK 2 ================= -->
+    <h2>Task 2: Dynamic Student Table</h2>
+
+    <input type="text" id="name" placeholder="Enter Name">
+    <input type="number" id="age" placeholder="Enter Age">
+    <input type="text" id="course" placeholder="Enter Course">
+    <button onclick="addRow()">Add Student</button>
+
+    <table id="studentTable">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Course</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+
+    <!-- ================= INTERNAL JAVASCRIPT ================= -->
+    <script>
+
+        /* ===== TASK 1 - IMAGE GALLERY ===== */
+        const previewImage = document.getElementById("previewImage");
+        const thumbnails = document.querySelectorAll(".thumb");
+
+        thumbnails.forEach(function(thumbnail) {
+
+            thumbnail.addEventListener("click", function() {
+
+                previewImage.src = this.src;
+
+                thumbnails.forEach(function(img) {
+                    img.classList.remove("active");
+                });
+
+                this.classList.add("active");
+            });
+
+        });
+
+
+        /* ===== TASK 2 - DYNAMIC TABLE ===== */
+        function addRow() {
+
+            let name = document.getElementById("name").value;
+            let age = document.getElementById("age").value;
+            let course = document.getElementById("course").value;
+
+            if (name === "" || age === "" || course === "") {
+                alert("Please fill all fields!");
+                return;
+            }
+
+            let table = document.getElementById("studentTable")
+                          .getElementsByTagName("tbody")[0];
+
+            let newRow = table.insertRow();
+
+            let cell1 = newRow.insertCell(0);
+            let cell2 = newRow.insertCell(1);
+            let cell3 = newRow.insertCell(2);
+            let cell4 = newRow.insertCell(3);
+
+            cell1.innerHTML = name;
+            cell2.innerHTML = age;
+            cell3.innerHTML = course;
+
+            cell4.innerHTML =
+                "<button class='delete-btn' onclick='deleteRow(this)'>Delete</button>";
+
+            document.getElementById("name").value = "";
+            document.getElementById("age").value = "";
+            document.getElementById("course").value = "";
+        }
+
+        function deleteRow(button) {
+            let row = button.parentNode.parentNode;
+            row.remove();
+        }
+
+    </script>
+
 </body>
 </html>
