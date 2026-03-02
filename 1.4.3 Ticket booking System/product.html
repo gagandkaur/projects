@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Product CRUD (Single File)</title>
+<style>
+    body { font-family: Arial; margin: 40px; }
+    input, button { padding: 8px; margin: 5px; }
+    .product { border: 1px solid #ccc; padding: 10px; margin: 10px 0; }
+</style>
+</head>
+<body>
+
+<h2>Product CRUD Operations (Single File)</h2>
+
+<h3>Add Product</h3>
+<input id="name" placeholder="Name">
+<input id="price" type="number" placeholder="Price">
+<input id="category" placeholder="Category">
+<button onclick="addProduct()">Add Product</button>
+
+<h3>Product List</h3>
+<button onclick="loadProducts()">Load Products</button>
+
+<div id="products"></div>
+
+<script>
+
+// Load from localStorage
+function getProductsFromStorage() {
+    return JSON.parse(localStorage.getItem("products")) || [];
+}
+
+// Save to localStorage
+function saveProducts(products) {
+    localStorage.setItem("products", JSON.stringify(products));
+}
+
+// CREATE
+function addProduct() {
+    let products = getProductsFromStorage();
+
+    const product = {
+        id: Date.now().toString(),
+        name: document.getElementById("name").value,
+        price: parseFloat(document.getElementById("price").value),
+        category: document.getElementById("category").value,
+        inStock: true,
+        createdAt: new Date().toISOString()
+    };
+
+    if (!product.name || !product.price || !product.category) {
+        alert("All fields required!");
+        return;
+    }
+
+    products.push(product);
+    saveProducts(products);
+
+    alert("Product Added!");
+    loadProducts();
+}
+
+// READ
+function loadProducts() {
+    const products = getProductsFromStorage();
+    const div = document.getElementById("products");
+    div.innerHTML = "";
+
+    products.forEach(p => {
+        div.innerHTML += `
+            <div class="product">
+                <b>${p.name}</b> - ₹${p.price} (${p.category})
+                <br>
+                In Stock: ${p.inStock}
+                <br>
+                <button onclick="updateProduct('${p.id}')">Update</button>
+                <button onclick="deleteProduct('${p.id}')">Delete</button>
+            </div>
+        `;
+    });
+}
+
+// UPDATE
+function updateProduct(id) {
+    let products = getProductsFromStorage();
+
+    const newPrice = prompt("Enter new price:");
+    if (!newPrice) return;
+
+    products = products.map(p => {
+        if (p.id === id) {
+            p.price = parseFloat(newPrice);
+        }
+        return p;
+    });
+
+    saveProducts(products);
+    alert("Product Updated!");
+    loadProducts();
+}
+
+// DELETE
+function deleteProduct(id) {
+    let products = getProductsFromStorage();
+
+    products = products.filter(p => p.id !== id);
+
+    saveProducts(products);
+    alert("Product Deleted!");
+    loadProducts();
+}
+
+</script>
+
+</body>
+</html>
