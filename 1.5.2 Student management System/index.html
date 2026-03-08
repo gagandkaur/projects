@@ -1,228 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>E-commerce Catalog</title>
+    <meta charset="UTF-8">
+    <title>Student Management System</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
 
-<style>
-    body {
-        font-family: Arial;
-        background: #f5f5f5;
-        padding: 20px;
-    }
+        h1 {
+            text-align: center;
+        }
 
-    h1 {
-        text-align: center;
-    }
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
 
-    .container {
-        max-width: 900px;
-        margin: auto;
-    }
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+        }
 
-    .card {
-        background: white;
-        padding: 15px;
-        margin-top: 15px;
-        border-radius: 8px;
-        box-shadow: 0px 0px 5px #ccc;
-    }
+        .btn-add {
+            background: #4CAF50;
+            color: white;
+        }
 
-    input, select {
-        width: 100%;
-        padding: 8px;
-        margin: 5px 0;
-    }
+        .btn-edit {
+            background: #007bff;
+            color: white;
+        }
 
-    button {
-        padding: 8px 12px;
-        margin: 5px;
-        border: none;
-        cursor: pointer;
-        border-radius: 5px;
-    }
+        .btn-delete {
+            background: red;
+            color: white;
+        }
 
-    .btn-add { background: green; color: white; }
-    .btn-delete { background: red; color: white; }
-    .btn-update { background: blue; color: white; }
+        .card {
+            background: white;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 5px #ccc;
+        }
 
-    .variant, .review {
-        background: #eee;
-        padding: 8px;
-        margin: 5px 0;
-        border-radius: 5px;
-    }
-</style>
+        .form-box {
+            display: none;
+            background: white;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
 
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+        }
+    </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>E-commerce Catalog</h1>
+    <h1>Student Management System</h1>
 
-    
-    <div class="card">
-        <h3>Add Product</h3>
-        <input id="name" placeholder="Product Name">
-        <input id="category" placeholder="Category">
+    <button class="btn btn-add" onclick="showForm()">+ New Student</button>
 
-        <button class="btn-add" onclick="addProduct()">Add Product</button>
+    <div class="form-box" id="formBox">
+        <input type="text" id="name" placeholder="Enter Name">
+        <input type="number" id="roll" placeholder="Enter Roll Number">
+        <button class="btn btn-add" onclick="saveStudent()">Save</button>
     </div>
 
-    <div id="productList"></div>
-    <div class="card">
-        <h3>Aggregation Result</h3>
-        <button onclick="showLowStock()">Low Stock Products</button>
-        <button onclick="showCategoryRatings()">Category Ratings</button>
-        <pre id="result"></pre>
-    </div>
+    <div id="studentList"></div>
 </div>
 
 <script>
-let products = JSON.parse(localStorage.getItem("products")) || [];
-  
-function addProduct() {
-    let name = document.getElementById("name").value;
-    let category = document.getElementById("category").value;
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+    let editIndex = -1;
 
-    if (!name || !category) return alert("Fill all fields");
+    function showForm() {
+        document.getElementById("formBox").style.display = "block";
+        document.getElementById("name").value = "";
+        document.getElementById("roll").value = "";
+        editIndex = -1;
+    }
 
-    let product = {
-        name,
-        category,
-        variants: [],
-        reviews: [],
-        avgRating: 0
-    };
+    function saveStudent() {
+        let name = document.getElementById("name").value;
+        let roll = document.getElementById("roll").value;
 
-    products.push(product);
-    save();
-}
-
-function addVariant(i) {
-    let sku = prompt("Enter SKU");
-    let color = prompt("Enter Color");
-    let price = parseFloat(prompt("Enter Price"));
-    let stock = parseInt(prompt("Enter Stock"));
-
-    products[i].variants.push({ sku, color, price, stock });
-    save();
-}
-
-
-function addReview(i) {
-    let rating = parseInt(prompt("Rating (1-5)"));
-    let comment = prompt("Comment");
-
-    let review = {
-        userId: Date.now().toString(),
-        rating,
-        comment
-    };
-
-    products[i].reviews.push(review);
-    calculateAvg(i);
-    save();
-}
-
-
-function calculateAvg(i) {
-    let reviews = products[i].reviews;
-    if (reviews.length === 0) return;
-
-    let sum = reviews.reduce((a, b) => a + b.rating, 0);
-    products[i].avgRating = (sum / reviews.length).toFixed(2);
-}
-
-// Update Stock
-function updateStock(i, v) {
-    let newStock = parseInt(prompt("New Stock"));
-    products[i].variants[v].stock = newStock;
-    save();
-}
-
-function deleteProduct(i) {
-    products.splice(i, 1);
-    save();
-}
-
-function save() {
-    localStorage.setItem("products", JSON.stringify(products));
-    display();
-}
-
-function display() {
-    let html = "";
-
-    products.forEach((p, i) => {
-        html += `
-        <div class="card">
-            <h2>${p.name}</h2>
-            <p>Category: ${p.category}</p>
-            <p>Avg Rating: ${p.avgRating}</p>
-
-            <h4>Variants</h4>
-            ${p.variants.map((v, vi) => `
-                <div class="variant">
-                    SKU: ${v.sku}, Color: ${v.color}, Price: ${v.price}, Stock: ${v.stock}
-                    <button class="btn-update" onclick="updateStock(${i}, ${vi})">Update Stock</button>
-                </div>
-            `).join("")}
-
-            <button class="btn-add" onclick="addVariant(${i})">+ Variant</button>
-
-            <h4>Reviews</h4>
-            ${p.reviews.map(r => `
-                <div class="review">
-                    Rating: ${r.rating} ⭐ <br>
-                    ${r.comment}
-                </div>
-            `).join("")}
-
-            <button class="btn-add" onclick="addReview(${i})">+ Review</button>
-            <button class="btn-delete" onclick="deleteProduct(${i})">Delete</button>
-        </div>
-        `;
-    });
-
-    document.getElementById("productList").innerHTML = html;
-}
-
-function showLowStock() {
-    let result = products.map(p => {
-        return {
-            name: p.name,
-            lowStockVariants: p.variants.filter(v => v.stock < 10)
-        };
-    });
-
-    document.getElementById("result").innerText = JSON.stringify(result, null, 2);
-}
-
-function showCategoryRatings() {
-    let map = {};
-
-    products.forEach(p => {
-        if (!map[p.category]) {
-            map[p.category] = { total: 0, count: 0 };
+        if (name === "" || roll === "") {
+            alert("All fields required!");
+            return;
         }
 
-        if (p.avgRating > 0) {
-            map[p.category].total += parseFloat(p.avgRating);
-            map[p.category].count++;
+        let student = { name, roll };
+
+        if (editIndex === -1) {
+            students.push(student);
+        } else {
+            students[editIndex] = student;
         }
-    });
 
-    let result = Object.keys(map).map(cat => ({
-        category: cat,
-        avgCategoryRating: map[cat].count === 0 ? null :
-            (map[cat].total / map[cat].count).toFixed(2)
-    }));
+        localStorage.setItem("students", JSON.stringify(students));
+        document.getElementById("formBox").style.display = "none";
+        displayStudents();
+    }
 
-    document.getElementById("result").innerText = JSON.stringify(result, null, 2);
-}
+    function displayStudents() {
+        let list = document.getElementById("studentList");
+        list.innerHTML = "";
 
-display();
+        students.forEach((s, index) => {
+            list.innerHTML += `
+                <div class="card">
+                    <h2>${s.name}</h2>
+                    <p>Roll: ${s.roll}</p>
+                    <button class="btn btn-edit" onclick="editStudent(${index})">Edit</button>
+                    <button class="btn btn-delete" onclick="deleteStudent(${index})">Delete</button>
+                </div>
+            `;
+        });
+    }
+
+    function editStudent(index) {
+        let s = students[index];
+        document.getElementById("formBox").style.display = "block";
+        document.getElementById("name").value = s.name;
+        document.getElementById("roll").value = s.roll;
+        editIndex = index;
+    }
+
+    function deleteStudent(index) {
+        if (confirm("Are you sure?")) {
+            students.splice(index, 1);
+            localStorage.setItem("students", JSON.stringify(students));
+            displayStudents();
+        }
+    }
+
+    displayStudents();
 </script>
 
 </body>
