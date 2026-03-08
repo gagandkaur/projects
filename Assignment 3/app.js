@@ -1,128 +1,144 @@
-import React, { useState } from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>React Tasks</title>
 
-function App() {
+  
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
-  /* ================= TASK 1 DATA ================= */
-  const userData = {
-    name: "Gagandeep Kaur",
-    email: "gagan@example.com",
-    department: "CSE AIML"
+  <style>
+    body {
+      font-family: Arial;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    .box {
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      color: white;
+    }
+
+    .header { background: #007bff; }
+    .profile { background: #28a745; }
+    .footer { background: #6c757d; }
+
+    .loginBox {
+      background: white;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    button {
+      padding: 8px 15px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel">
+
+
+
+
+function Header() {
+  return <div className="box header">Header Component</div>;
+}
+
+
+function ProfileDetails(props) {
+  return (
+    <div className="box profile">
+      <h3>Profile Details</h3>
+      <p>Name: {props.name}</p>
+      <p>Email: {props.email}</p>
+      <p>Department: {props.department}</p>
+    </div>
+  );
+}
+
+
+function Footer() {
+  return <div className="box footer">Footer Component</div>;
+}
+
+
+function ProfilePage() {
+  const user = {
+    name: "Kritarth Singh",
+    email: "kritarth@gmail.com",
+    department: "Computer Science"
   };
 
-  /* ================= TASK 2 STATE ================= */
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  /* ================= COMPONENTS ================= */
-
-  function Header() {
-    return (
-      <div style={styles.header}>
-        <h2>Profile Page</h2>
-      </div>
-    );
-  }
-
-  function ProfileDetails(props) {
-    return (
-      <div style={styles.profile}>
-        <h3>User Details</h3>
-        <p><strong>Name:</strong> {props.name}</p>
-        <p><strong>Email:</strong> {props.email}</p>
-        <p><strong>Department:</strong> {props.department}</p>
-      </div>
-    );
-  }
-
-  function Footer() {
-    return (
-      <div style={styles.footer}>
-        <p>© 2026 Assignment 3 - React</p>
-      </div>
-    );
-  }
-
-  function LoginStatus() {
-    return (
-      <div style={styles.login}>
-        <h3>Login Status</h3>
-
-        {/* Ternary Operator */}
-        <p>
-          {isLoggedIn ? "Welcome, User" : "Please Login"}
-        </p>
-
-        {/* && Operator */}
-        {isLoggedIn && (
-          <p>You are successfully logged in.</p>
-        )}
-
-        <button
-          style={styles.button}
-          onClick={() => setIsLoggedIn(!isLoggedIn)}
-        >
-          {isLoggedIn ? "Logout" : "Login"}
-        </button>
-      </div>
-    );
-  }
-
-  /* ================= MAIN RETURN ================= */
-
   return (
-    <div style={styles.container}>
+    <div>
       <Header />
-
-      <ProfileDetails
-        name={userData.name}
-        email={userData.email}
-        department={userData.department}
+      <ProfileDetails 
+        name={user.name} 
+        email={user.email} 
+        department={user.department} 
       />
-
-      <LoginStatus />
-
       <Footer />
     </div>
   );
 }
 
-/* ================= INTERNAL CSS ================= */
-const styles = {
-  container: {
-    textAlign: "center",
-    fontFamily: "Arial"
-  },
 
-  header: {
-    backgroundColor: "#4CAF50",
-    color: "white",
-    padding: "15px"
-  },
 
-  profile: {
-    backgroundColor: "#f2f2f2",
-    margin: "20px",
-    padding: "15px",
-    borderRadius: "8px"
-  },
 
-  login: {
-    backgroundColor: "#e6f2ff",
-    margin: "20px",
-    padding: "15px",
-    borderRadius: "8px"
-  },
 
-  footer: {
-    backgroundColor: "#333",
-    color: "white",
-    padding: "10px"
-  },
+function LoginStatus() {
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
-  button: {
-    padding: "8px 12px",
-    marginTop: "10px",
-    cursor: "pointer"
-  }
-};
+  return (
+    <div className="loginBox">
+      <h3>Login Status</h3>
 
-export default App;
+      {/* Ternary Operator */}
+      <p>{isLoggedIn ? "Welcome, User" : "Please Login"}</p>
+
+      {/* AND Operator */}
+      {isLoggedIn && <p>You are successfully logged in ✅</p>}
+
+      <button onClick={() => setIsLoggedIn(!isLoggedIn)}>
+        {isLoggedIn ? "Logout" : "Login"}
+      </button>
+    </div>
+  );
+}
+
+
+
+
+function App() {
+  return (
+    <div>
+      <h1>React Assignment</h1>
+
+      {/* Task 1 */}
+      <ProfilePage />
+
+      {/* Task 2 */}
+      <LoginStatus />
+    </div>
+  );
+}
+
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+</script>
+
+</body>
+</html>
